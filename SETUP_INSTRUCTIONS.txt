@@ -1,0 +1,190 @@
+# claudeSkills — Setup Instructions
+# ===================================
+# Two sections:
+#   A) First-time setup (new repo + install)
+#   B) Adding the new sql-tuning skill to an existing install
+#
+# Total time: ~5 minutes for first-time, ~2 minutes for update.
+
+
+# ════════════════════════════════════════════════════════════════
+# SECTION A — FIRST-TIME SETUP
+# (Use this if you have never set up claudeSkills before)
+# ════════════════════════════════════════════════════════════════
+
+# ── A1. Create the GitHub repository ─────────────────────────────
+#
+# 1. Go to https://github.com/new
+# 2. Name:        claudeSkills
+# 3. Description: Performance diagnostics skills for Claude Code
+# 4. Visibility:  Public or Private — your choice
+# 5. ❌ Do NOT initialize with README, .gitignore, or license
+# 6. Click "Create repository"
+# 7. Copy your repo URL: https://github.com/YOUR_USERNAME/claudeSkills.git
+
+
+# ── A2. Unzip and move the folder ────────────────────────────────
+
+mv ~/Downloads/claudeSkills ~/claudeSkills
+
+# Verify all 8 skills are present:
+ls ~/claudeSkills
+# Expected:
+#   README.md  SKILL_TEMPLATE.md  SETUP_INSTRUCTIONS.txt  .gitignore
+#   awr-analysis/        sql-monitor-analysis/   sql-tuning/
+#   thread-dump-analysis/ heap-dump-analysis/    jfr-analysis/
+#   ui-console-analysis/  stack-trace-analysis/
+
+
+# ── A3. Push to GitHub ────────────────────────────────────────────
+
+cd ~/claudeSkills
+git init
+git add .
+git commit -m "Initial commit: 8 performance diagnostic skills"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/claudeSkills.git
+git push -u origin main
+
+# ⚠️  Replace YOUR_USERNAME with your GitHub username.
+#
+# If prompted for a password, use a Personal Access Token:
+#   GitHub → Settings → Developer Settings
+#   → Personal Access Tokens (classic) → Generate new token
+#   → Check "repo" scope → copy the token and paste as the password
+#
+# To avoid being prompted on every push:
+#   macOS:  git config --global credential.helper osxkeychain
+#   Linux:  git config --global credential.helper store
+#   SSH:    git remote set-url origin git@github.com:YOUR_USERNAME/claudeSkills.git
+
+
+# ── A4. Install all 8 skills into Claude Code ────────────────────
+
+mkdir -p ~/.claude/skills
+
+ln -s ~/claudeSkills/awr-analysis          ~/.claude/skills/awr-analysis
+ln -s ~/claudeSkills/sql-monitor-analysis  ~/.claude/skills/sql-monitor-analysis
+ln -s ~/claudeSkills/sql-tuning            ~/.claude/skills/sql-tuning
+ln -s ~/claudeSkills/thread-dump-analysis  ~/.claude/skills/thread-dump-analysis
+ln -s ~/claudeSkills/heap-dump-analysis    ~/.claude/skills/heap-dump-analysis
+ln -s ~/claudeSkills/jfr-analysis          ~/.claude/skills/jfr-analysis
+ln -s ~/claudeSkills/ui-console-analysis   ~/.claude/skills/ui-console-analysis
+ln -s ~/claudeSkills/stack-trace-analysis  ~/.claude/skills/stack-trace-analysis
+
+# Verify symlinks:
+ls -la ~/.claude/skills/
+# Each line should show: skill-name -> /Users/YOU/claudeSkills/skill-name
+
+
+# ── A5. Verify in Claude Code ─────────────────────────────────────
+
+# Open Claude Code:
+#   claude
+#
+# Run inside Claude Code:
+#   /skills
+#
+# All 8 skills should appear:
+#   awr-analysis, sql-monitor-analysis, sql-tuning,
+#   thread-dump-analysis, heap-dump-analysis, jfr-analysis,
+#   ui-console-analysis, stack-trace-analysis
+
+
+# ════════════════════════════════════════════════════════════════
+# SECTION B — UPDATE EXISTING INSTALL (adding sql-tuning skill)
+# (Use this if you already have claudeSkills set up from before)
+# ════════════════════════════════════════════════════════════════
+
+# ── B1. Get the new files ─────────────────────────────────────────
+#
+# Option 1: Copy from the new zip into your existing repo folder
+#   Unzip ~/Downloads/claudeSkills.zip somewhere temporary, then:
+
+cp -r ~/Downloads/claudeSkills/sql-tuning ~/claudeSkills/sql-tuning
+cp ~/Downloads/claudeSkills/README.md ~/claudeSkills/README.md
+cp ~/Downloads/claudeSkills/SETUP_INSTRUCTIONS.txt ~/claudeSkills/SETUP_INSTRUCTIONS.txt
+
+# Option 2: If a teammate pushed changes to GitHub, just pull:
+#   cd ~/claudeSkills && git pull
+
+
+# ── B2. Push the new skill to GitHub ─────────────────────────────
+
+cd ~/claudeSkills
+git add .
+git commit -m "Add sql-tuning skill"
+git push
+
+
+# ── B3. Symlink into Claude Code ──────────────────────────────────
+
+ln -s ~/claudeSkills/sql-tuning ~/.claude/skills/sql-tuning
+
+# Verify it was added:
+ls -la ~/.claude/skills/sql-tuning
+# Expected: ~/.claude/skills/sql-tuning -> /Users/YOU/claudeSkills/sql-tuning
+
+
+# ── B4. Verify in Claude Code ─────────────────────────────────────
+
+# Open Claude Code → run /skills
+# sql-tuning should now appear in the list
+
+
+# ════════════════════════════════════════════════════════════════
+# ONGOING: KEEPING SKILLS UPDATED
+# ════════════════════════════════════════════════════════════════
+
+# Since Claude Code uses symlinks pointing into ~/claudeSkills,
+# a git pull is all you ever need — no reinstall, no re-symlink:
+
+cd ~/claudeSkills && git pull
+
+
+# ════════════════════════════════════════════════════════════════
+# ADDING FUTURE SKILLS
+# ════════════════════════════════════════════════════════════════
+
+# 1. Create the skill
+mkdir -p ~/claudeSkills/my-new-skill/references
+cp ~/claudeSkills/SKILL_TEMPLATE.md ~/claudeSkills/my-new-skill/SKILL.md
+#    → Edit SKILL.md: fill in name, description, and analysis steps
+
+# 2. Symlink into Claude Code
+ln -s ~/claudeSkills/my-new-skill ~/.claude/skills/my-new-skill
+
+# 3. Commit and push to GitHub
+cd ~/claudeSkills
+git add .
+git commit -m "Add my-new-skill"
+git push
+
+# 4. Verify: open Claude Code → /skills
+
+
+# ════════════════════════════════════════════════════════════════
+# TROUBLESHOOTING
+# ════════════════════════════════════════════════════════════════
+
+# Skill not appearing in /skills?
+#   Check the symlink exists:
+#     ls -la ~/.claude/skills/
+#   Check SKILL.md has valid YAML frontmatter (name + description):
+#     head -10 ~/claudeSkills/sql-tuning/SKILL.md
+
+# "ln: failed to create symbolic link: File exists"
+#   rm ~/.claude/skills/skill-name
+#   ln -s ~/claudeSkills/skill-name ~/.claude/skills/skill-name
+
+# Git push rejected?
+#   git pull --rebase origin main
+#   git push
+
+# Wrong remote URL?
+#   git remote set-url origin https://YOUR_USERNAME@github.com/YOUR_USERNAME/claudeSkills.git
+
+# Credential prompt on every push?
+#   macOS:  git config --global credential.helper osxkeychain
+#   Linux:  git config --global credential.helper store
+#   Or switch to SSH keys (recommended for regular use)
